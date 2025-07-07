@@ -86,3 +86,5 @@ services:
 
 volumes:
   pgdata2:
+    # ports:
+    #   - 8000:8000  # Uncomment if you want to expose a port
