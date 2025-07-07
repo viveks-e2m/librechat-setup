@@ -19,6 +19,14 @@ module.exports = () =>
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: `${process.env.DOMAIN_SERVER}${process.env.GOOGLE_CALLBACK_URL}`,
       proxy: true,
+      scope: [
+        'profile',
+        'email',
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/spreadsheets',
+      ],
+      accessType: 'offline', // <--- add this
+      prompt: 'consent',
     },
     googleLogin,
   );

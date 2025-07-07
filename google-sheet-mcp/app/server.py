@@ -1,15 +1,25 @@
-from mcp.server.fastmcp import FastMCP
-from google_sheets.service import GoogleSheetsService
-from auth.utils import load_credentials
+import google.auth
+import os
+import json
+from mcp.server.fastmcp import FastMCP, Context
 from googleapiclient.errors import HttpError
+from google_sheets.service import GoogleSheetsService
+from auth.utils import get_user_google_credentials
 
-mcp = FastMCP(name="Google Sheets MCP Server", host="0.0.0.0", port=8000)
+
+from auth.config import settings
+
+mcp = FastMCP(
+    name="google-sheets-mcp",
+    host="0.0.0.0",
+    port=8000,
+)
 
 
 @mcp.tool(
     description="Reads and retrieves structured data from Google Sheets using authenticated access for a specific user. Returns data as a list of dicts using the first row as headers."
 )
-def read_sheet(user_id: str, sheet_id: str, range_: str):
+def read_sheet(user_id:str,sheet_id: str, range_: str):
     """
     Reads data from a Google Sheet for a specific user and returns it as a list of dicts.
     Args:
@@ -22,7 +32,7 @@ def read_sheet(user_id: str, sheet_id: str, range_: str):
         FileNotFoundError: If credentials for the user are not found.
     """
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
@@ -39,7 +49,7 @@ def read_sheet(user_id: str, sheet_id: str, range_: str):
 @mcp.tool(
     description="Lists all sheet names in a Google Spreadsheet for a specific user."
 )
-def list_sheets(user_id: str, sheet_id: str):
+def list_sheets(user_id: str, sheet_id: str, context: Context):
     """
     Lists all sheet names in a Google Spreadsheet for a specific user.
     Args:
@@ -51,7 +61,7 @@ def list_sheets(user_id: str, sheet_id: str):
         FileNotFoundError: If credentials for the user are not found.
     """
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
@@ -64,18 +74,23 @@ def list_sheets(user_id: str, sheet_id: str):
 )
 def append_row(user_id: str, sheet_id: str, sheet_name: str, row_values: list):
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
     try:
-        result = service.service.spreadsheets().values().append(
-            spreadsheetId=sheet_id,
-            range=f"{sheet_name}",
-            valueInputOption="USER_ENTERED",
-            insertDataOption="INSERT_ROWS",
-            body={"values": [row_values]}
-        ).execute()
+        result = (
+            service.service.spreadsheets()
+            .values()
+            .append(
+                spreadsheetId=sheet_id,
+                range=f"{sheet_name}",
+                valueInputOption="USER_ENTERED",
+                insertDataOption="INSERT_ROWS",
+                body={"values": [row_values]},
+            )
+            .execute()
+        )
         return {"result": result}
     except HttpError as e:
         return {"error": str(e)}
@@ -86,17 +101,22 @@ def append_row(user_id: str, sheet_id: str, sheet_name: str, row_values: list):
 )
 def update_cell(user_id: str, sheet_id: str, cell: str, value: str):
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
     try:
-        result = service.service.spreadsheets().values().update(
-            spreadsheetId=sheet_id,
-            range=cell,
-            valueInputOption="USER_ENTERED",
-            body={"values": [[value]]}
-        ).execute()
+        result = (
+            service.service.spreadsheets()
+            .values()
+            .update(
+                spreadsheetId=sheet_id,
+                range=cell,
+                valueInputOption="USER_ENTERED",
+                body={"values": [[value]]},
+            )
+            .execute()
+        )
         return {"result": result}
     except HttpError as e:
         return {"error": str(e)}
@@ -107,36 +127,41 @@ def update_cell(user_id: str, sheet_id: str, cell: str, value: str):
 )
 def delete_row(user_id: str, sheet_id: str, sheet_name: str, row_index: int):
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
     try:
         # Get sheetId (not sheet name) for batchUpdate
-        spreadsheet = service.service.spreadsheets().get(spreadsheetId=sheet_id).execute()
+        spreadsheet = (
+            service.service.spreadsheets().get(spreadsheetId=sheet_id).execute()
+        )
         sheet_id_num = None
-        for s in spreadsheet['sheets']:
-            if s['properties']['title'] == sheet_name:
-                sheet_id_num = s['properties']['sheetId']
+        for s in spreadsheet["sheets"]:
+            if s["properties"]["title"] == sheet_name:
+                sheet_id_num = s["properties"]["sheetId"]
                 break
         if sheet_id_num is None:
             return {"error": f"Sheet {sheet_name} not found."}
         batch_update_request = {
-            "requests": [{
-                "deleteDimension": {
-                    "range": {
-                        "sheetId": sheet_id_num,
-                        "dimension": "ROWS",
-                        "startIndex": row_index,
-                        "endIndex": row_index + 1
+            "requests": [
+                {
+                    "deleteDimension": {
+                        "range": {
+                            "sheetId": sheet_id_num,
+                            "dimension": "ROWS",
+                            "startIndex": row_index,
+                            "endIndex": row_index + 1,
+                        }
                     }
                 }
-            }]
+            ]
         }
-        result = service.service.spreadsheets().batchUpdate(
-            spreadsheetId=sheet_id,
-            body=batch_update_request
-        ).execute()
+        result = (
+            service.service.spreadsheets()
+            .batchUpdate(spreadsheetId=sheet_id, body=batch_update_request)
+            .execute()
+        )
         return {"result": result}
     except HttpError as e:
         return {"error": str(e)}
@@ -147,40 +172,37 @@ def delete_row(user_id: str, sheet_id: str, sheet_name: str, row_index: int):
 )
 def create_sheet(user_id: str, sheet_id: str, new_sheet_name: str):
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
     try:
-        requests = [{
-            "addSheet": {
-                "properties": {"title": new_sheet_name}
-            }
-        }]
+        requests = [{"addSheet": {"properties": {"title": new_sheet_name}}}]
         body = {"requests": requests}
-        result = service.service.spreadsheets().batchUpdate(
-            spreadsheetId=sheet_id,
-            body=body
-        ).execute()
+        result = (
+            service.service.spreadsheets()
+            .batchUpdate(spreadsheetId=sheet_id, body=body)
+            .execute()
+        )
         return {"result": result}
     except HttpError as e:
         return {"error": str(e)}
 
 
-@mcp.tool(
-    description="Gets metadata for a Google Spreadsheet for a specific user."
-)
+@mcp.tool(description="Gets metadata for a Google Spreadsheet for a specific user.")
 def get_spreadsheet_metadata(user_id: str, sheet_id: str):
     try:
-        creds = load_credentials(user_id)
+        creds = get_user_google_credentials(user_id)
     except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
     try:
-        spreadsheet = service.service.spreadsheets().get(spreadsheetId=sheet_id).execute()
+        spreadsheet = (
+            service.service.spreadsheets().get(spreadsheetId=sheet_id).execute()
+        )
         return {
             "title": spreadsheet.get("properties", {}).get("title"),
-            "sheets": [s['properties']['title'] for s in spreadsheet.get('sheets', [])]
+            "sheets": [s["properties"]["title"] for s in spreadsheet.get("sheets", [])],
         }
     except HttpError as e:
         return {"error": str(e)}

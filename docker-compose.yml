@@ -74,15 +74,17 @@ services:
     container_name: google-sheet-mcp
     restart: always
     environment:
-      - CLIENT_SECRET_FILE=/app/tokens/viveksoni.json
-      - GOOGLE_REDIRECT_URI=your_redirect_uri
-      - GOOGLE_SPREEDSHEET_SCOPE=your_spreadsheet_scope
-      - GOOGLE_DRIVE_SCOPE=your_drive_scope
+      - GOOGLE_CLIENT_ID=162665597983-jb2jd8os89ac4rrspofs2kunicmjqmo6.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - GOOGLE_REDIRECT_URI=http://localhost:8000/auth/callback
+      - GOOGLE_SPREEDSHEET_SCOPE=https://www.googleapis.com/auth/spreadsheets,https://www.googleapis.com/auth/drive
+      - GOOGLE_DRIVE_SCOPE=https://www.googleapis.com/auth/drive
+      - MONGO_URI=mongodb://127.0.0.1:27017
     volumes:
       - ./google-sheet-mcp/app:/app/app
       - ./google-sheet-mcp/tokens:/app/tokens
     ports:
       - 8000:8000
-
+    
 volumes:
   pgdata2:

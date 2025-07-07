@@ -53,6 +53,8 @@ const handleExistingUser = async (oldUser, avatarUrl) => {
  * @param {string} params.username - The username of the new user.
  * @param {string} params.name - The name of the new user.
  * @param {boolean} [params.emailVerified=false] - Optional. Indicates whether the user's email is verified. Defaults to false.
+ * @param {string} [params.googleAccessToken] - Optional. The Google access token for the new user.
+ * @param {string} [params.googleRefreshToken] - Optional. The Google refresh token for the new user.
  *
  * @returns {Promise<User>}
  *          A promise that resolves to the newly created user object.
@@ -68,6 +70,8 @@ const createSocialUser = async ({
   username,
   name,
   emailVerified,
+  googleAccessToken,
+  googleRefreshToken,
 }) => {
   const update = {
     email,
@@ -77,6 +81,8 @@ const createSocialUser = async ({
     username,
     name,
     emailVerified,
+    ...(googleAccessToken && { googleAccessToken }),
+    ...(googleRefreshToken && { googleRefreshToken }),
   };
 
   const balanceConfig = await getBalanceConfig();

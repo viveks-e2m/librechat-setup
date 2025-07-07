@@ -5,6 +5,7 @@ const { findUser } = require('~/models');
 
 const socialLogin =
   (provider, getProfileDetails) => async (accessToken, refreshToken, idToken, profile, cb) => {
+    console.log('##################### GOOGLE TOKENS: ##################', { accessToken, refreshToken }); // <--- Add this line
     try {
       const { email, id, avatarUrl, username, name, emailVerified } = getProfileDetails({
         idToken,
@@ -15,6 +16,13 @@ const socialLogin =
       const ALLOW_SOCIAL_REGISTRATION = isEnabled(process.env.ALLOW_SOCIAL_REGISTRATION);
 
       if (oldUser) {
+        // Save Google tokens if provider is google
+        if (provider === 'google') {
+          await require('./process').updateUser(oldUser._id, {
+            googleAccessToken: accessToken,
+            googleRefreshToken: refreshToken,
+          });
+        }
         await handleExistingUser(oldUser, avatarUrl);
         return cb(null, oldUser);
       }
@@ -29,6 +37,11 @@ const socialLogin =
           username,
           name,
           emailVerified,
+          // Save Google tokens if provider is google
+          ...(provider === 'google' && {
+            googleAccessToken: accessToken,
+            googleRefreshToken: refreshToken,
+          }),
         });
         return cb(null, newUser);
       }

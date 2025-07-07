@@ -24,6 +24,7 @@ router.use(logHeaders);
 router.use(loginLimiter);
 
 const oauthHandler = async (req, res) => {
+  console.log('process.env.OPENID_REUSE_TOKENS', req.user, req);
   try {
     await checkDomainAllowed(req, res);
     await checkBan(req, res);
@@ -35,6 +36,8 @@ const oauthHandler = async (req, res) => {
       req.user.provider == 'openid' &&
       isEnabled(process.env.OPENID_REUSE_TOKENS) === true
     ) {
+      
+      
       setOpenIDAuthTokens(req.user.tokenset, res);
     } else {
       await setAuthTokens(req.user._id, res);

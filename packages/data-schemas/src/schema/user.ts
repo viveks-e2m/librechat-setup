@@ -138,6 +138,14 @@ const userSchema = new Schema<IUser>(
       },
       default: {},
     },
+    googleAccessToken: {
+      type: String,
+      required: false,
+    },
+    googleRefreshToken: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true },
 );
