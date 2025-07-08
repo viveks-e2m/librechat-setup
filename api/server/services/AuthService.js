@@ -357,6 +357,8 @@ const resetPassword = async (userId, token, password) => {
  * @returns
  */
 const setAuthTokens = async (userId, res, sessionId = null) => {
+  console.log('userId -->', userId, res);
+  
   try {
     const user = await getUserById(userId);
     const token = await generateToken(user);

@@ -32,6 +32,8 @@ services:
     image: mongo
     restart: always
     user: "${UID}:${GID}"
+    ports:
+      - 27011:27017
     volumes:
       - ./data-node:/data/db
     command: mongod --noauth
@@ -79,7 +81,7 @@ services:
       - GOOGLE_REDIRECT_URI=http://localhost:8000/auth/callback
       - GOOGLE_SPREEDSHEET_SCOPE=https://www.googleapis.com/auth/spreadsheets,https://www.googleapis.com/auth/drive
       - GOOGLE_DRIVE_SCOPE=https://www.googleapis.com/auth/drive
-      - MONGO_URI=mongodb://127.0.0.1:27017
+      - MONGO_URI=mongodb://chat-mongodb:27017
     volumes:
       - ./google-sheet-mcp/app:/app/app
       - ./google-sheet-mcp/tokens:/app/tokens
