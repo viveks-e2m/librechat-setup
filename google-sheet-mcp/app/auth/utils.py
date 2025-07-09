@@ -7,7 +7,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from auth.config import settings
 
 TOKEN_DIR = "tokens"
-GOOGLE_TOKEN_URI = "https://oauth2.googleapis.com/token"
 
 os.makedirs(TOKEN_DIR, exist_ok=True)
 
@@ -28,17 +27,14 @@ def save_credentials(user_id: str, credentials: Credentials):
 def load_credentials(user_id: str) -> Credentials:
     path = os.path.join(TOKEN_DIR, f"{user_id}.json")
     if not os.path.exists(path):
-        raise FileNotFoundError(
-            f"No credentials found for user_id '{user_id}'. Please authenticate via /auth/login?user_id={user_id}"
-        )
+        raise FileNotFoundError(f"No credentials found for user_id '{user_id}'. Please authenticate via /auth/login?user_id={user_id}")
     with open(path, "r") as f:
         data = json.load(f)
-    return Credentials(**data)
-
+    return Credentials(**data) 
 
 def get_user_google_credentials(user_id):
     # Connect to MongoDB
-    mongo_uri = os.environ.get("MONGO_URI", "mongodb://chat-mongodb:27017")
+    mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
     db_name = os.environ.get("MONGO_DB", "LibreChat")
     client = MongoClient(mongo_uri)
     db = client[db_name]
@@ -59,21 +55,18 @@ def get_user_google_credentials(user_id):
         "https://www.googleapis.com/auth/drive",
         "https://www.googleapis.com/auth/spreadsheets",
         "profile",
-        "email",
+        "email"
     ]
 
     creds = Credentials(
-        token=user.get(
-            "googleAccessToken", ""
-        ),  # May be expired, but Google will refresh it
+        token=user.get("googleAccessToken", ""),  # May be expired, but Google will refresh it
         refresh_token=user["googleRefreshToken"],
         token_uri=token_uri,
         client_id=client_id,
         client_secret=client_secret,
-        scopes=scopes,
+        scopes=scopes
     )
     return creds
-
 
 def run_oauth_flow_save_credentials(user_id: str):
     """
@@ -87,25 +80,9 @@ def run_oauth_flow_save_credentials(user_id: str):
         scopes = [s.strip() for s in scopes.split(",") if s.strip()]
 
     flow = InstalledAppFlow.from_client_secrets_file(
-        settings.CLIENT_SECRET_FILE, scopes=scopes
+        settings.CLIENT_SECRET_FILE,
+        scopes=scopes
     )
     creds = flow.run_local_server(port=8000)
     save_credentials(user_id, creds)
     print(f"Credentials saved for user_id: {user_id}")
-
-
-def create_credentials_from_token(access_token: str):
-    """
-    Creates a google.oauth2.credentials.Credentials object from an access token.
-    LibreChat handles the refresh token and expiration.
-    """
-    # For now, we only need the access token directly.
-    # LibreChat is responsible for managing refresh tokens and expiration.
-    print("########### Access Token  #######3####",access_token,"###########################")
-    creds = Credentials(
-        token=access_token,
-        token_uri=GOOGLE_TOKEN_URI,
-        client_id=settings.GOOGLE_CLIENT_ID,
-        client_secret=settings.GOOGLE_CLIENT_SECRET,
-    )
-    return creds

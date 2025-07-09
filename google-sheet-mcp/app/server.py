@@ -3,25 +3,11 @@ import os
 import json
 from mcp.server.fastmcp import FastMCP, Context
 from googleapiclient.errors import HttpError
-from googleapiclient.discovery import build
 from google_sheets.service import GoogleSheetsService
-from auth.utils import get_user_google_credentials,create_credentials_from_token
+from auth.utils import get_user_google_credentials
 
 
 from auth.config import settings
-
-
-def get_creds_from_context(context: Context):
-    """Helper to extract token and create credentials from FastMCP's Context."""
-    # Access the underlying request object via context.request_context.request
-    request = context.request_context.request
-
-    auth_header = request.headers.get("Authorization") # Access headers via the request object
-    if not auth_header or not auth_header.startswith("Bearer "):
-        raise ValueError("Authorization header missing or invalid.")
-    access_token = auth_header.split(" ")[1]
-    return create_credentials_from_token(access_token)  
-
 
 mcp = FastMCP(
     name="google-sheets-mcp",
@@ -33,37 +19,21 @@ mcp = FastMCP(
 @mcp.tool(
     description="Reads and retrieves structured data from Google Sheets using authenticated access for a specific user. Returns data as a list of dicts using the first row as headers."
 )
-def read_sheet(sheet_id: str, range_: str, context: Context): # Add context here
-
-
-    headers = context.request_context.request.headers
-    user_id = headers.get("X-User-ID")
-    auth_token = headers.get("X-Auth-Token")
-    user_email = headers.get("X-User-Email")
-    access_token = headers.get("Authorization", "").replace("Bearer ", "")
-    
-    print(f"User ID: {user_id}")
-    print(f"User ID: {auth_token}")
-    print(f"User Email: {user_email}")
-    print(f"Access Token (trimmed): {access_token[:10]}...")
-
-    print(f"Request Method: {context.request_context.request.method}")
-    print(f"Request URL: {context.request_context.request.url}")
-    print("--- End Context ---\n")
-
-    # To get a more useful representation, you might want to print specific attributes:
-    print(f"Context Client ID: {context.client_id}")
-    print(f"Context Request ID: {context.request_id}")
-    print(f"Context Headers (from request): {context.request_context.request.headers}")
-    print(f"Context Request Method: {context.request_context.request.method}")
-    print(f"Context Request URL: {context.request_context.request.url}")
-    print(f"---------------------------------------\n")
-    
-
-
+def read_sheet(user_id:str,sheet_id: str, range_: str):
+    """
+    Reads data from a Google Sheet for a specific user and returns it as a list of dicts.
+    Args:
+        user_id (str): The user ID whose credentials will be used.
+        sheet_id (str): The ID of the Google Sheet.
+        range_ (str): The range to read (e.g., 'Sheet1!A1:C10').
+    Returns:
+        dict: {"data": list of dicts, one per row, using the first row as headers}
+    Raises:
+        FileNotFoundError: If credentials for the user are not found.
+    """
     try:
-        creds = get_creds_from_context(context)
-    except ValueError as e:
+        creds = get_user_google_credentials(user_id)
+    except FileNotFoundError as e:
         return {"error": str(e)}
     service = GoogleSheetsService(creds)
     data = service.read_sheet(sheet_id, range_)
@@ -74,31 +44,6 @@ def read_sheet(sheet_id: str, range_: str, context: Context): # Add context here
         return {"data": dict_rows}
     else:
         return {"data": []}
-# def read_sheet(user_id:str,sheet_id: str, range_: str):
-#     """
-#     Reads data from a Google Sheet for a specific user and returns it as a list of dicts.
-#     Args:
-#         user_id (str): The user ID whose credentials will be used.
-#         sheet_id (str): The ID of the Google Sheet.
-#         range_ (str): The range to read (e.g., 'Sheet1!A1:C10').
-#     Returns:
-#         dict: {"data": list of dicts, one per row, using the first row as headers}
-#     Raises:
-#         FileNotFoundError: If credentials for the user are not found.
-#     """
-#     try:
-#         creds = get_user_google_credentials(user_id)
-#     except FileNotFoundError as e:
-#         return {"error": str(e)}
-#     service = GoogleSheetsService(creds)
-#     data = service.read_sheet(sheet_id, range_)
-#     if data and len(data) > 1:
-#         headers = data[0]
-#         rows = data[1:]
-#         dict_rows = [dict(zip(headers, row)) for row in rows]
-#         return {"data": dict_rows}
-#     else:
-#         return {"data": []}
 
 
 @mcp.tool(
@@ -259,36 +204,6 @@ def get_spreadsheet_metadata(user_id: str, sheet_id: str):
             "title": spreadsheet.get("properties", {}).get("title"),
             "sheets": [s["properties"]["title"] for s in spreadsheet.get("sheets", [])],
         }
-    except HttpError as e:
-        return {"error": str(e)}
-
-@mcp.tool(
-    description="Lists all spreadsheets in the user's Google Drive. Returns a list of spreadsheet names and IDs."
-)
-def list_drive_spreadsheets(context:Context):
-    """
-    Lists all spreadsheets in the user's Google Drive.
-    Args:
-        user_id (str): The user ID whose credentials will be used.
-    Returns:
-        dict: {"spreadsheets": list of {"id": ..., "name": ...}}
-    """
-    headers = context.request_context.request.headers
-    user_id = headers.get("X-User-ID")
-    try:
-        creds = get_user_google_credentials(user_id)
-    except FileNotFoundError as e:
-        return {"error": str(e)}
-    try:
-        drive_service = build('drive', 'v3', credentials=creds)
-        results = drive_service.files().list(
-            q="mimeType='application/vnd.google-apps.spreadsheet'",
-            pageSize=100,
-            fields="files(id, name)"
-        ).execute()
-        items = results.get('files', [])
-        spreadsheets = [{"id": f["id"], "name": f["name"]} for f in items]
-        return {"spreadsheets": spreadsheets}
     except HttpError as e:
         return {"error": str(e)}
 

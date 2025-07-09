@@ -20,8 +20,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * @returns {void} Sends a success message after updating the action with OAuth tokens.
  */
 router.get('/:action_id/oauth/callback', async (req, res) => {
-  console.log('action_id/oauth/callback');
-  
   const { action_id } = req.params;
   const { code, state } = req.query;
   const flowsCache = getLogStores(CacheKeys.FLOWS);
