@@ -84,6 +84,8 @@ services:
     env_file:
       - .env
 
+
+
 volumes:
   pgdata2:
     # ports:

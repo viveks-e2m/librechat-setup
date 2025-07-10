@@ -208,5 +208,56 @@ def get_spreadsheet_metadata(user_id: str, sheet_id: str):
         return {"error": str(e)}
 
 
+@mcp.tool(
+    description="Lists all Google Spreadsheets owned by the user. Returns a list of spreadsheets with their IDs, names, creation dates, and modification dates."
+)
+def list_all_spreadsheets(user_id: str):
+    """
+    Lists all Google Spreadsheets owned by the user.
+    Args:
+        user_id (str): The user ID whose credentials will be used.
+    Returns:
+        dict: {"spreadsheets": list of spreadsheet objects with id, name, createdTime, modifiedTime, webViewLink}
+    Raises:
+        FileNotFoundError: If credentials for the user are not found.
+    """
+    try:
+        creds = get_user_google_credentials(user_id)
+    except FileNotFoundError as e:
+        return {"error": str(e)}
+    service = GoogleSheetsService(creds)
+    try:
+        spreadsheets = service.list_all_spreadsheets()
+        return {"spreadsheets": spreadsheets}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@mcp.tool(
+    description="Creates a new Google Spreadsheet with the specified title for a specific user."
+)
+def create_new_spreadsheet(user_id: str, title: str):
+    """
+    Creates a new Google Spreadsheet with the specified title.
+    Args:
+        user_id (str): The user ID whose credentials will be used.
+        title (str): The title for the new spreadsheet.
+    Returns:
+        dict: {"result": spreadsheet creation result with id, title, etc.}
+    Raises:
+        FileNotFoundError: If credentials for the user are not found.
+    """
+    try:
+        creds = get_user_google_credentials(user_id)
+    except FileNotFoundError as e:
+        return {"error": str(e)}
+    service = GoogleSheetsService(creds)
+    try:
+        result = service.create_spreadsheet(title)
+        return {"result": result}
+    except HttpError as e:
+        return {"error": str(e)}
+
+
 if __name__ == "__main__":
     mcp.run(transport="streamable-http")
