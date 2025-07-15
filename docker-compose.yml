@@ -69,24 +69,38 @@ services:
       - vectordb
     env_file:
       - .env
-  google-sheet-mcp:
+  # google-sheet-mcp:
+  #   build:
+  #     context: ./google-sheet-mcp
+  #     dockerfile: Dockerfile
+  #   container_name: google-sheet-mcp
+  #   restart: always
+  #   environment:
+  #     - GOOGLE_CLIENT_ID=162665597983-jb2jd8os89ac4rrspofs2kunicmjqmo6.apps.googleusercontent.com
+  #     - GOOGLE_CLIENT_SECRET=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
+  #     - GOOGLE_REDIRECT_URI=http://localhost:8000/auth/callback
+  #     - GOOGLE_SPREEDSHEET_SCOPE=https://www.googleapis.com/auth/spreadsheets,https://www.googleapis.com/auth/drive
+  #     - GOOGLE_DRIVE_SCOPE=https://www.googleapis.com/auth/drive
+  #     - MONGO_URI=mongodb://127.0.0.1:27017
+  #   volumes:
+  #     - ./google-sheet-mcp/app:/app/app
+  #     - ./google-sheet-mcp/tokens:/app/tokens
+  #   ports:
+  #     - 8000:8000
+
+  razorcopy-mcp:
     build:
-      context: ./google-sheet-mcp
+      context: ./razorcopy-mcp
       dockerfile: Dockerfile
-    container_name: google-sheet-mcp
-    restart: always
-    environment:
-      - GOOGLE_CLIENT_ID=162665597983-jb2jd8os89ac4rrspofs2kunicmjqmo6.apps.googleusercontent.com
-      - GOOGLE_CLIENT_SECRET=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
-      - GOOGLE_REDIRECT_URI=http://localhost:8000/auth/callback
-      - GOOGLE_SPREEDSHEET_SCOPE=https://www.googleapis.com/auth/spreadsheets,https://www.googleapis.com/auth/drive
-      - GOOGLE_DRIVE_SCOPE=https://www.googleapis.com/auth/drive
-      - MONGO_URI=mongodb://127.0.0.1:27017
-    volumes:
-      - ./google-sheet-mcp/app:/app/app
-      - ./google-sheet-mcp/tokens:/app/tokens
+    container_name: razorcopy-mcp
     ports:
-      - 8000:8000
+      - "3001:3001"  # Map host 3001 to container 3001 (adjust as needed)
+    environment:
+      # Add any required env vars here
+      - PYTHON_BASE_URL=http://127.0.0.1:8000
+      - PYTHON_HOST=http://127.0.0.1:8000
+    restart: always
+
     
 volumes:
   pgdata2:
