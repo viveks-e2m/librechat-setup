@@ -9,8 +9,8 @@
  * @returns {Promise<Object>} - The result of the bulk assignment operation.
  */
 const executeFunction = async ({ articleIds, assigned_members, remove_assigned_members, status }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   const url = `${host}/article/bulk-assign`;
 
   const body = {

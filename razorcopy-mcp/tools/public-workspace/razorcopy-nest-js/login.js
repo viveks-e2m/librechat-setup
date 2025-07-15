@@ -7,8 +7,8 @@
  * @returns {Promise<Object>} - The result of the login attempt.
  */
 const executeFunction = async ({ email, password }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL for the login endpoint
     const url = `${host}/auth/login`;
@@ -16,10 +16,10 @@ const executeFunction = async ({ email, password }) => {
     // Set up the request body
     const body = JSON.stringify({ email, password });
 
-    // Set up headers for the request
+    // // Set up headers for the request
     const headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+    //   'Authorization': `Bearer ${token}`
     };
 
     // Perform the fetch request

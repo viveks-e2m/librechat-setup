@@ -16,8 +16,8 @@
  * @returns {Promise<Object>} - The result of the API call to add a new agency owner.
  */
 const executeFunction = async ({ firstname, lastname, email, password, roleId, agency_name, country, state, city, zipcode, phone }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   
   const body = {
     firstname,

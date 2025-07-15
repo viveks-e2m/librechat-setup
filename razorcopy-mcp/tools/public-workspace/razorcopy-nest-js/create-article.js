@@ -16,8 +16,8 @@
  * @returns {Promise<Object>} - The result of the article creation.
  */
 const executeFunction = async ({ name, project_id, status, assigned_members, assign_followers = [], description, keywords, secondary_keywords = [], website_url, keyword_volume, keyword_difficulty }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   const articleData = {
     name,
     project_id,

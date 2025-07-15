@@ -9,8 +9,8 @@
  * @returns {Promise<Object>} - The response from the API after creating the prompt type.
  */
 const executeFunction = async ({ name, titlePrompt, outlinePrompt, articlePrompt }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
 
   const url = `${host}/prompt-types`;
   const body = JSON.stringify({

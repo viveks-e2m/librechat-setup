@@ -10,8 +10,8 @@
  * @returns {Promise<Object>} - The response from the server.
  */
 const executeFunction = async ({ articleId, model, content, requestId, avg_word_count }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   const url = `${host}/webhooks/${articleId}/content`;
 
   const body = {

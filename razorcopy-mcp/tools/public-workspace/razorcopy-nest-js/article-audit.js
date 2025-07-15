@@ -7,8 +7,8 @@
  * @returns {Promise<Object>} - The result of the audit report fetch.
  */
 const executeFunction = async ({ articleId, refresh = false }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with the article ID
     const url = new URL(`${host}/article/${articleId}/audit-report`);

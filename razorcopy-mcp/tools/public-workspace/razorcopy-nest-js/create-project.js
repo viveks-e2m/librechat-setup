@@ -16,8 +16,8 @@
  * @returns {Promise<Object>} - The result of the project creation.
  */
 const executeFunction = async ({ name, description, competitors_websites, targeted_keywords, website_url, language, location, assign_to, guideline_id, guideline_description, targeted_audience }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     const url = `${host}/projects`;
 

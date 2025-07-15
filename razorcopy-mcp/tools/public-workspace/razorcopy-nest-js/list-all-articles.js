@@ -11,8 +11,8 @@
  * @returns {Promise<Object>} - The result of the article listing.
  */
 const executeFunction = async ({ project_Id, page = 1, status, sort, start_date, end_date }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with query parameters
     const url = new URL(`${host}/article`);

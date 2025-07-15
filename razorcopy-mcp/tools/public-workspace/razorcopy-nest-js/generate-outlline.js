@@ -7,8 +7,8 @@
  * @returns {Promise<Object>} - The result of the outline generation.
  */
 const executeFunction = async ({ articleId, refresh = true }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with path and query parameters
     const url = new URL(`${host}/article/${articleId}/outline`);

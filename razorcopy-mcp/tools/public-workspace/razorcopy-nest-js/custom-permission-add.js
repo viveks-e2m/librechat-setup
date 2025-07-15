@@ -8,8 +8,8 @@
  * @returns {Promise<Object>} - The result of the permission addition.
  */
 const executeFunction = async ({ userId, permission, delete: del = false }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   const url = `${host}/roles/user-permissions`;
 
   const body = JSON.stringify({

@@ -6,8 +6,8 @@
  * @returns {Promise<Object>} - The response from the API containing article content.
  */
 const executeFunction = async ({ articleId }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with the article ID
     const url = `${host}/article/${articleId}/ai-content`;

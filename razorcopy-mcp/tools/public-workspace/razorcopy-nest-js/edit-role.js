@@ -8,8 +8,8 @@
  * @returns {Promise<Object>} - The result of the role edit operation.
  */
 const executeFunction = async ({ roleId, code, permissions }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
 
   const url = `${host}/roles/${roleId}`;
   const body = JSON.stringify({ code, permissions });

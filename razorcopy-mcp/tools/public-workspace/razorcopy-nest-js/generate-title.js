@@ -6,8 +6,8 @@
  * @returns {Promise<Object>} - The result of the title generation.
  */
 const executeFunction = async ({ articleId }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with the articleId path variable
     const url = `${host}/article/${articleId}/topics`;

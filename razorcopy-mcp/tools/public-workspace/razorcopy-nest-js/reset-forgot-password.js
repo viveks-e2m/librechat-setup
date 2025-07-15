@@ -7,8 +7,8 @@
  * @returns {Promise<Object>} - The result of the password reset operation.
  */
 const executeFunction = async ({ token, password }) => {
-  const host = 'http://localhost:8001';
-  const accessToken = ''; // will be provided by the user
+  const host = process.env.NEST_HOST;
+  const accessToken = process.env.ACCESS_TOKEN;
 
   try {
     // Construct the URL for the password reset

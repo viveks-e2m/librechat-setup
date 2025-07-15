@@ -6,8 +6,8 @@
  * @returns {Promise<Object>} - The result of the system prompts listing.
  */
 const executeFunction = async ({ type } = {}) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL
     const url = new URL(`${host}/system-prompts`);

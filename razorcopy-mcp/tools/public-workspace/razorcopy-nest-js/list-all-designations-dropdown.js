@@ -9,8 +9,8 @@
  * @returns {Promise<Object>} - The result of the designation list request.
  */
 const executeFunction = async ({ page = 1, limit = 10, search = '', sort = '' }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with query parameters
     const url = new URL(`${host}/designations/list`);

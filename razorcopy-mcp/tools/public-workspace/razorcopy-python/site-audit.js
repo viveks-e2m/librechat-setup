@@ -8,6 +8,7 @@ dotenv.config();
  * @returns {Promise<Object>} - The result of the site audit.
  */
 const executeFunction = async ({ url }) => {
+  console.log("siteAuditTool called with args:", args);
   const pythonHost = process.env.PYTHON_HOST; // will be provided by the user
   try {
     // Construct the URL for the API request

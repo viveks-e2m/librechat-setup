@@ -4,8 +4,8 @@
  * @returns {Promise<Object>} - The result of the logout operation.
  */
 const executeFunction = async () => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Set up the URL for the logout request
     const url = `${host}/auth/logout`;

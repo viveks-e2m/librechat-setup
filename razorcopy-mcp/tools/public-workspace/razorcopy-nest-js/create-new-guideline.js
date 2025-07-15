@@ -7,8 +7,8 @@
  * @returns {Promise<Object>} - The result of the guideline creation.
  */
 const executeFunction = async ({ name, description }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
 
   try {
     // Construct the URL for the request

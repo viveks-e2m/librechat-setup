@@ -7,8 +7,8 @@
  * @returns {Promise<Object>} - The result of the password update.
  */
 const executeFunction = async ({ old_password, new_password }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   const url = `${host}/auth/update-password`;
 
   const body = JSON.stringify({

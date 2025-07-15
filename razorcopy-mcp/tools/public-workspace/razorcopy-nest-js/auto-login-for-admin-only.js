@@ -6,8 +6,8 @@
  * @returns {Promise<Object>} - The result of the auto-login request.
  */
 const executeFunction = async ({ user_id }) => {
-  const host = 'http://localhost:8001';
-  const accessToken = ''; // will be provided by the user
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
 
   try {
     // Construct the URL for the auto-login endpoint
@@ -19,8 +19,8 @@ const executeFunction = async ({ user_id }) => {
     };
 
     // If an access token is provided, add it to the Authorization header
-    if (accessToken) {
-      headers['Authorization'] = `Bearer ${accessToken}`;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     // Prepare the request body

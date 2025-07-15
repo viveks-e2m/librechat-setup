@@ -10,8 +10,8 @@
  * @returns {Promise<Object>} - The response from the API after updating the agent.
  */
 const executeFunction = async ({ firstname, lastname, timezone, agency_name, managed_by }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   const userId = '14b885da-cc0b-48c7-b900-e8ebf12b670e'; // example user ID, can be parameterized if needed
 
   try {

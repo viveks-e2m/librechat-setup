@@ -10,13 +10,13 @@
  * @returns {Promise<Object>} - The result of the project search.
  */
 const executeFunction = async ({ search, page = 1, limit = -1, sort = 'id:desc', user_id }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with query parameters
     const url = new URL(`${host}/projects`);
     if (search) url.searchParams.append('search', search);
-    if (page) url.searchParams.append('page', page);
+    if (page) url.searchParams.append('page', page);  
     if (limit) url.searchParams.append('limit', limit);
     if (sort) url.searchParams.append('sort', sort);
     if (user_id) url.searchParams.append('user_id', user_id);

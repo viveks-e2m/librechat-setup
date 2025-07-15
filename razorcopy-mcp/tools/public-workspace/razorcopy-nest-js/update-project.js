@@ -7,8 +7,9 @@
  * @param {string} [args.host='http://localhost:8001'] - The host URL for the API.
  * @returns {Promise<Object>} - The result of the project update.
  */
-const executeFunction = async ({ projectId, updateData, host = 'http://localhost:8001' }) => {
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+const executeFunction = async ({ projectId, updateData, }) => {
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL for the PATCH request
     const url = `${host}/projects/${projectId}`;

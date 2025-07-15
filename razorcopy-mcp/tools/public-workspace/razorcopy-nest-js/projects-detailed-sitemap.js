@@ -6,8 +6,8 @@
  * @returns {Promise<Object>} - The detailed sitemap of the project.
  */
 const executeFunction = async ({ projectId }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with the project ID
     const url = `${host}/projects/${projectId}/sitemap`;

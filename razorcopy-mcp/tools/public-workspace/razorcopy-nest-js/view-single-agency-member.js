@@ -6,8 +6,8 @@
  * @returns {Promise<Object>} - The result of the user fetch operation.
  */
 const executeFunction = async ({ userId }) => {
-  const host = 'http://localhost:8001';
-  const token = process.env.PUBLIC_WORKSPACE_DEMO_API_KEY;
+  const host = process.env.NEST_HOST;
+  const token = process.env.ACCESS_TOKEN;
   try {
     // Construct the URL with the userId path variable
     const url = `${host}/users/${userId}`;
