@@ -97,8 +97,8 @@ services:
       - "3001:3001"  # Map host 3001 to container 3001 (adjust as needed)
     environment:
       # Add any required env vars here
-      - PYTHON_BASE_URL=http://127.0.0.1:8000
-      - PYTHON_HOST=http://127.0.0.1:8000
+      - PYTHON_BASE_URL=http://host.docker.internal:8000
+      - PYTHON_HOST=http://host.docker.internal:8000
     restart: always
 
     
